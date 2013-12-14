@@ -1,0 +1,54 @@
+/* style.css */
+
+.canvas-area {
+	position: absolute;
+	top: 20px;
+	left: 20px;
+}
+
+#top-apple {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background-color: black;
+	border: solid white 2px;
+}
+
+#top-snake {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background: transparent;
+}
+
+#front-apple {
+	position: absolute;
+	top: 300px;
+	left: 0px;
+	background-color: black;
+	border: solid white 2px;
+}
+
+#front-snake {
+	position: absolute;
+	top: 300px;
+	left: 0px;
+	background: transparent;
+}
+
+#side-apple {
+	position: absolute;
+	top: 300px;
+	left: 300px;
+	background-color: black;
+	border: solid white 2px;
+}
+
+#side-snake {
+	position: absolute;
+	top: 300px;
+	left: 300px;
+	background: transparent;
+}
+
+
