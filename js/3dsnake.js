@@ -4,8 +4,8 @@ var WIDTH = 300;
 var HEIGHT = 300;
 var DOT_SIZE = 10;
 var RAND_POS = 29;
-var APPLE = new Object();
-var SNAKE = new Object();
+var APPLE = new Object;
+var SNAKE = new Object;
 
 /* Initialize game and start it */
 var game = new Game();
@@ -46,17 +46,13 @@ var imageRepo = new function() {
 }
 
 function Drawable() {	
-	this.init = function(x, y, z, w, h, d) {
-		// Defualt variables
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.width = w;
-		this.height = h;
-		this.depth = d;
+	this.init = function() {
+		this.width = 10;
+		this.height = 10;
+		this.depth = 10;
 	}
 
-	this.speed = 0;
+	this.speed = 1;
 	this.canvasWidth = 0;
 	this.canvasHeight = 0;
 	
@@ -67,7 +63,7 @@ function Drawable() {
 function FApple() {
 	this.draw = function() {
 		if (!FappleExists) {
-			this.context.drawImage(imageRepo.apple, this.x, this.y);
+			this.context.drawImage(imageRepo.apple, APPLE.x, APPLE.y);
 			FappleExists = true;	// Change Later!
 		}
 	};
@@ -77,7 +73,7 @@ function TApple() {
 	this.draw = function() {
 
 		if (!TappleExists) {
-			this.context.drawImage(imageRepo.apple, this.x, this.z);
+			this.context.drawImage(imageRepo.apple, APPLE.x, APPLE.z);
 			TappleExists = true;	// Change Later!
 		}
 	};
@@ -86,7 +82,7 @@ function TApple() {
 function SApple() {
 	this.draw = function() {
 		if (!SappleExists) {
-			this.context.drawImage(imageRepo.apple, this.z, this.y);
+			this.context.drawImage(imageRepo.apple, APPLE.z, APPLE.y);
 			SappleExists = true;	// Change Later!
 		}
 	};
@@ -95,34 +91,34 @@ function SApple() {
 function FSnake() {
 	this.draw = function() {
 
-		this.context.clearRect(SNAKE.x, SNAKE.y, WIDTH, HEIGHT);
-		SNAKE.y -= this.speed;
-		if (this.y <= 0 - this.height)
+		this.context.clearRect(SNAKE.x[0], SNAKE.y[0], WIDTH, HEIGHT);
+		SNAKE.y[0] -= this.speed;
+		if (this.y <= 0 - HEIGHT)
 			return true;
 		else
-			this.context.drawImage(imageRepo.dot, this.x, this.y);
+			this.context.drawImage(imageRepo.dot, SNAKE.x[0], SNAKE.y[0]);
 	};
 }
 
 function TSnake() {
 	this.draw = function() {
-		this.context.clearRect(SNAKE.x, SNAKE.z, WIDTH, HEIGHT);
-		SNAKE.y -= this.speed;
-		if (this.y <= 0 - this.height)
+		this.context.clearRect(SNAKE.x[0], SNAKE.z[0], WIDTH, HEIGHT);
+		SNAKE.y[0] -= this.speed;
+		if (this.y <= 0 - HEIGHT)
 			return true;
 		else
-			this.context.drawImage(imageRepo.dot, this.x, this.z);
+			this.context.drawImage(imageRepo.dot, SNAKE.x[0], SNAKE.z[0]);
 	};
 }
 
 function SSnake() {
 	this.draw = function() {
-		this.context.clearRect(SNAKE.z, SNAKE.y, WIDTH, HEIGHT);
-		SNAKE.y -= this.speed;
-		if (this.y <= 0 - this.height)
+		this.context.clearRect(SNAKE.z[0], SNAKE.y[0], WIDTH, HEIGHT);
+		SNAKE.y[0] -= this.speed;
+		if (this.y <= 0 - HEIGHT)
 			return true;
 		else
-			this.context.drawImage(imageRepo.dot, this.z, this.y);
+			this.context.drawImage(imageRepo.dot, SNAKE.z[0], SNAKE.y[0]);
 	};
 }
 
@@ -165,10 +161,14 @@ function Game() {
 
 		// initialize snake
 		SNAKE.length = 3;
-		for (var i = 0; i < length; i++) {
-			SNAKE.x[i] = x - i * 10;
-			SNAKE.y[i] = y;
-			SNAKE.z[i] = z;
+		SNAKE.x = new Array();
+		SNAKE.y = new Array();
+		SNAKE.z = new Array();
+
+		for (var i = 0; i < SNAKE.length; i++) {
+			SNAKE.x[i] = 100 - i * 10;
+			SNAKE.y[i] = 100;
+			SNAKE.z[i] = 100;
 		}
 
 		// initialize apple
@@ -210,13 +210,13 @@ function Game() {
 			this.Tsnake = new TSnake();
 			this.Ssnake = new SSnake();
 
-			this.Fapple.init(100,30,50, 10,10,10); 
-			this.Tapple.init(100,30,50, 10,10,10);
-			this.Sapple.init(100,30,50, 10,10,10);
+			this.Fapple.init(); 
+			this.Tapple.init();
+			this.Sapple.init();
 
-			this.Fsnake.init(100,200,90, 10,10,10);
-			this.Tsnake.init(100,200,90, 10,10,10);
-			this.Ssnake.init(100,200,90, 10,10,10);
+			this.Fsnake.init();
+			this.Tsnake.init();
+			this.Ssnake.init();
 
 			return true;
 		} else {
