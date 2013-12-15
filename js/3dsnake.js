@@ -1,19 +1,45 @@
 // 3dsnake.js
 
+
+/* CONSTANTS */
 var WIDTH = 300;
 var HEIGHT = 300;
 var DEPTH = 300;
 var DOT_SIZE = 10;
-var RAND_POS = 9;
-var APPLE = new Object;
-var SNAKE = new Object;
+var SNAKE_LENGTH = 4;
 var SPEED = 50;
-var COLLISION = false;
+
+KEY_CODES = {
+	left: 37,
+	up: 38,
+	right: 39,
+	down: 40,
+	spacebar: 32
+};
+
+KEYS = [37,38,39,40,32];
+
+APPLE = {
+	x: 0,
+	y: 0,
+	z: 150
+};
+
+SNAKE = {
+	x: new Array(),
+	y: new Array(),
+	z: new Array(),
+	length: SNAKE_LENGTH
+};
 
 var up = false;
 var down = false;
 var left = false;
-var right = false;
+var right = true;
+
+var inGame = true;
+var endGame = false;
+var pauseGame = false;
 
 /* Initialize game and start it */
 var game = new Game();
@@ -27,16 +53,9 @@ function init() {
 var imageRepo = new function() {
 	// Define images
 	this.apple = new Image();
+
 	this.dot = new Image();
 
-	var numbImages = 3,
-			numLoaded = 0;
-
-	function imageLoaded() {
-		numLoaded++;
-		if (numLoaded === numbImages)
-			window.init();
-	}
 	this.apple.onLoad = function() {
 		imageLoaded();
 	}
@@ -49,49 +68,43 @@ var imageRepo = new function() {
 }
 
 function Drawable() {	
-	this.init = function() {
-	}
-	
+	this.init = function() {};
 	this.draw = function() {};
 }
 
 function FSnake() {
+
 	this.draw = function() {
+
+		this.context.clearRect(APPLE.x, APPLE.y, DOT_SIZE, DOT_SIZE);
+		this.context.drawImage(imageRepo.apple, APPLE.x, APPLE.y);
+
 		this.context.clearRect(SNAKE.x[SNAKE.length - 1], SNAKE.y[SNAKE.length - 1], DOT_SIZE, DOT_SIZE);
 		this.context.drawImage(imageRepo.dot, SNAKE.x[0], SNAKE.y[0]);
-
-		if (!APPLE.isVisible) {
-			this.context.clearRect(0, 0, DOT_SIZE, DOT_SIZE);
-			this.context.drawImage(imageRepo.apple, APPLE.x, APPLE.y);
-			APPLE.isVisible = true;	// Change Later!
-		}
 	};
 };
 
 function TSnake() {
+
 	this.draw = function() {
+
+		this.context.clearRect(APPLE.x, APPLE.z, DOT_SIZE, DOT_SIZE);
+		this.context.drawImage(imageRepo.apple, APPLE.x, APPLE.z);
+
 		this.context.clearRect(SNAKE.x[SNAKE.length - 1], SNAKE.z[SNAKE.length - 1], DOT_SIZE, DOT_SIZE);
 		this.context.drawImage(imageRepo.dot, SNAKE.x[0], SNAKE.z[0]);
-
-
-		if (!APPLE.isVisible) {
-			this.context.clearRect(0, 0, DOT_SIZE, DOT_SIZE);
-			this.context.drawImage(imageRepo.apple, APPLE.x, APPLE.z);
-			APPLE.isVisible = true;	// Change Later!
-		}
 	};
 };
 
 function SSnake() {
+
 	this.draw = function() {
+
+		this.context.clearRect(APPLE.z, APPLE.y, DOT_SIZE, DOT_SIZE);
+		this.context.drawImage(imageRepo.apple, APPLE.z, APPLE.y);
+
 		this.context.clearRect(SNAKE.z[SNAKE.length - 1], SNAKE.y[SNAKE.length - 1], DOT_SIZE, DOT_SIZE);
 		this.context.drawImage(imageRepo.dot, SNAKE.z[0], SNAKE.y[0]);
-
-		if (!APPLE.isVisible) {
-			this.context.clearRect(0, 0, DOT_SIZE, DOT_SIZE);
-			this.context.drawImage(imageRepo.apple, APPLE.z, APPLE.y);
-			APPLE.isVisible = true;	// Change Later!
-		}
 	};
 };
 
@@ -108,45 +121,44 @@ function updateSnake() {
 		SNAKE.z[i] = SNAKE.z[i - 1];
 	}
 
-	if (KEY_STATUS.left) {
+	if (left) {
 		SNAKE.x[0] -= DOT_SIZE;
 	}
-	if (KEY_STATUS.right) {
+	if (right) {
 		SNAKE.x[0] += DOT_SIZE;
 	}
-	if (KEY_STATUS.up) {
+	if (up) {
 		SNAKE.y[0] -= DOT_SIZE;
 	}
-	if (KEY_STATUS.down) {
+	if (down) {
 		SNAKE.y[0] += DOT_SIZE;
 	}
 
-	//TODO: add z-dimension
+	//TODO: add z-dimension logic
 };
 
 function updateApple() {
 	APPLE.x = Math.floor(Math.random() * WIDTH / DOT_SIZE) * DOT_SIZE;
 	APPLE.y = Math.floor(Math.random() * HEIGHT / DOT_SIZE) * DOT_SIZE;
-	APPLE.z = Math.floor(Math.random() * DEPTH / DOT_SIZE) * DOT_SIZE;
-	console.log(APPLE.x);
-	console.log(APPLE.y);
-	console.log(APPLE.z);
-	APPLE.isVisible = false;
-
+	// APPLE.z = Math.floor(Math.random() * DEPTH / DOT_SIZE) * DOT_SIZE;
 };
 
 function checkApple() {
 	if ((SNAKE.x[0] === APPLE.x) && (SNAKE.y[0] === APPLE.y) && (SNAKE.z[0] === APPLE.z)) {
-		SNAKE.length++;
 		updateApple();
+		SNAKE.length++;
 	}
 };
 
 function detectCollision() {
-	if (SNAKE.x[0] < 0 || SNAKE.x[0] > WIDTH || SNAKE.y[0] < 0 || SNAKE.y[0] > HEIGHT) {
-		COLLISION = true;
-		console.log("Hit the Walls, bud!");
-	}
+	if (SNAKE.x[0] < 0 || SNAKE.x[0] > WIDTH - 10
+	 || SNAKE.y[0] < 0 || SNAKE.y[0] > HEIGHT - 10
+	 || SNAKE.z[0] < 0 || SNAKE.z[0] > DEPTH - 10)
+		inGame = false;
+}
+
+function gamePaused() {
+	// TODO
 }
 
 /**
@@ -156,23 +168,15 @@ function Game() {
 
 	this.init = function() {
 
-		// initialize snake
-		SNAKE.length = 4;
-		SNAKE.x = new Array();
-		SNAKE.y = new Array();
-		SNAKE.z = new Array();
+		// Initialize apple
+		updateApple();
 
-
-		// Display first three dots
+		// Set first three dots
 		for (var i = 0; i < SNAKE.length; i++) {
 			SNAKE.x[i] = 130 - i * 10;
 			SNAKE.y[i] = 150;
 			SNAKE.z[i] = 150;
 		}
-
-		// initialize apple
-		APPLE.x = APPLE.y = APPLE.z = 150;
-		APPLE.isVisible = false;
 
 		// Get canvas elements
 		this.FSCanvas = document.getElementById('front-snake');
@@ -194,9 +198,9 @@ function Game() {
 			this.Tsnake = new TSnake();
 			this.Ssnake = new SSnake();
 
-			this.Fsnake.init();
-			this.Tsnake.init();
-			this.Ssnake.init();
+			// this.Fsnake.init();
+			// this.Tsnake.init();
+			// this.Ssnake.init();
 
 			return true;
 		} else {
@@ -213,47 +217,64 @@ function Game() {
 /* Animation Loop */
 function animate() {
 
+	detectCollision();
 	// reduce animation speed
 	setTimeout(function() {
-		requestAnimFrame(animate);
+		if (inGame) {
+			requestAnimFrame(animate);
+			checkApple();
+			updateSnake();
 
-		detectCollision();
-		updateSnake();
-		if ((SNAKE.x[0] === APPLE.x) && (SNAKE.y[0] === APPLE.y) && (SNAKE.z[0] === APPLE.z)) {
-			SNAKE.length++;
-			updateApple();
+			game.Fsnake.draw();
+			game.Tsnake.draw();
+			game.Ssnake.draw();
+		} else {
+			console.log("DONE");
 		}
 
-		game.Fsnake.draw();
-		game.Tsnake.draw();
-		game.Ssnake.draw();
+		if (pauseGame) {
+			gamePaused();
+			console.log("Game Paused");
+		}
 	}, SPEED);
 }
 
-KEY_CODES = {
-	37: 'left',
-	38: 'up',
-	39: 'right',
-	40: 'down'
-}
-
-KEY_STATUS = {};
-for (code in KEY_CODES) {
-	KEY_STATUS[KEY_CODES[code]] = false;
-}
-
 document.onkeydown = function(e) {
-	var keyCode = e.keyCode;
-	if (KEY_CODES[keyCode]) {
+	var key = e.keyCode;
+	if (KEYS.indexOf(key) > -1)
 		e.preventDefault();
-		KEY_STATUS[KEY_CODES[keyCode]] = true;
-		for (code in KEY_CODES) {
-			if (code != keyCode)
-				KEY_STATUS[KEY_CODES[code]] = false;
-		}
 
+	if ((key === KEY_CODES.left) && (!right)) {
+		left = true;
+		up = false;
+		down = false;
 	}
-}
+
+	if ((key === KEY_CODES.right) && (!left)) {
+		right = true;
+		up = false;
+		down = false;
+	}
+
+	if ((key === KEY_CODES.up) && (!down)) {
+		up = true;
+		left = false;
+		right = false;
+	}
+
+	if ((key === KEY_CODES.down) && (!up)) {
+		down = true;
+		left = false;
+		right = false;
+	}
+
+	if (key === KEY_CODES.spacebar) {
+		if (!pauseGame)
+			pauseGame = true;
+		else
+			pauseGame = false;
+	}
+};
 
 /* requestAnim shim layer */
 window.requestAnimFrame = (function() {
