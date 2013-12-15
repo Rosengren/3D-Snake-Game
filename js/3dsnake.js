@@ -14,15 +14,17 @@ KEY_CODES = {
 	up: 38,
 	right: 39,
 	down: 40,
+	front: 68,
+	back:65,
 	spacebar: 32
 };
 
-KEYS = [37,38,39,40,32];
+KEYS = [32,37,38,39,40,65,68];
 
 APPLE = {
 	x: 0,
 	y: 0,
-	z: 150
+	z: 0
 };
 
 SNAKE = {
@@ -36,6 +38,8 @@ var up = false;
 var down = false;
 var left = false;
 var right = true;
+var front = false;
+var back = false
 
 var inGame = true;
 var endGame = false;
@@ -73,36 +77,27 @@ function Drawable() {
 }
 
 function FSnake() {
-
 	this.draw = function() {
-
 		this.context.clearRect(APPLE.x, APPLE.y, DOT_SIZE, DOT_SIZE);
 		this.context.drawImage(imageRepo.apple, APPLE.x, APPLE.y);
-
 		this.context.clearRect(SNAKE.x[SNAKE.length - 1], SNAKE.y[SNAKE.length - 1], DOT_SIZE, DOT_SIZE);
 		this.context.drawImage(imageRepo.dot, SNAKE.x[0], SNAKE.y[0]);
 	};
 };
 
 function TSnake() {
-
 	this.draw = function() {
-
 		this.context.clearRect(APPLE.x, APPLE.z, DOT_SIZE, DOT_SIZE);
 		this.context.drawImage(imageRepo.apple, APPLE.x, APPLE.z);
-
 		this.context.clearRect(SNAKE.x[SNAKE.length - 1], SNAKE.z[SNAKE.length - 1], DOT_SIZE, DOT_SIZE);
 		this.context.drawImage(imageRepo.dot, SNAKE.x[0], SNAKE.z[0]);
 	};
 };
 
 function SSnake() {
-
 	this.draw = function() {
-
 		this.context.clearRect(APPLE.z, APPLE.y, DOT_SIZE, DOT_SIZE);
 		this.context.drawImage(imageRepo.apple, APPLE.z, APPLE.y);
-
 		this.context.clearRect(SNAKE.z[SNAKE.length - 1], SNAKE.y[SNAKE.length - 1], DOT_SIZE, DOT_SIZE);
 		this.context.drawImage(imageRepo.dot, SNAKE.z[0], SNAKE.y[0]);
 	};
@@ -133,14 +128,18 @@ function updateSnake() {
 	if (down) {
 		SNAKE.y[0] += DOT_SIZE;
 	}
-
-	//TODO: add z-dimension logic
+	if (front) {
+		SNAKE.z[0] += DOT_SIZE;
+	}
+	if (back) {
+		SNAKE.z[0] -= DOT_SIZE;
+	}
 };
 
 function updateApple() {
 	APPLE.x = Math.floor(Math.random() * WIDTH / DOT_SIZE) * DOT_SIZE;
 	APPLE.y = Math.floor(Math.random() * HEIGHT / DOT_SIZE) * DOT_SIZE;
-	// APPLE.z = Math.floor(Math.random() * DEPTH / DOT_SIZE) * DOT_SIZE;
+	APPLE.z = Math.floor(Math.random() * DEPTH / DOT_SIZE) * DOT_SIZE;
 };
 
 function checkApple() {
@@ -212,6 +211,18 @@ function Game() {
 	this.start = function() {
 			animate();
 	};
+
+	this.pause = function() {
+
+	};
+
+	this.restart = function() {
+
+	};
+
+	this.gameOver = function() {
+
+	};
 }
 
 /* Animation Loop */
@@ -248,22 +259,46 @@ document.onkeydown = function(e) {
 		left = true;
 		up = false;
 		down = false;
+		front = false;
+		back = false;
 	}
 
 	if ((key === KEY_CODES.right) && (!left)) {
 		right = true;
 		up = false;
 		down = false;
+		front = false;
+		back = false;
 	}
 
 	if ((key === KEY_CODES.up) && (!down)) {
 		up = true;
 		left = false;
 		right = false;
+		front = false;
+		back = false;
 	}
 
 	if ((key === KEY_CODES.down) && (!up)) {
 		down = true;
+		left = false;
+		right = false;
+		front = false;
+		back = false;
+	}
+
+	if ((key === KEY_CODES.front) && (!back)) {
+		front = true;
+		up = false;
+		down = false;
+		left = false;
+		right = false;
+	}
+
+	if ((key === KEY_CODES.back) && (!front)) {
+		back = true;
+		up = false;
+		down = false;
 		left = false;
 		right = false;
 	}
