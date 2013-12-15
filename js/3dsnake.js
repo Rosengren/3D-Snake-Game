@@ -1,50 +1,3 @@
-// 3dsnake.js
-
-
-/* CONSTANTS */
-var WIDTH = 300;
-var HEIGHT = 300;
-var DEPTH = 300;
-var DOT_SIZE = 10;
-var SNAKE_LENGTH = 4;
-var SPEED = 50;
-
-KEY_CODES = {
-	left: 37,
-	up: 38,
-	right: 39,
-	down: 40,
-	front: 68,
-	back:65,
-	spacebar: 32
-};
-
-KEYS = [32,37,38,39,40,65,68];
-
-APPLE = {
-	x: 0,
-	y: 0,
-	z: 0
-};
-
-SNAKE = {
-	x: new Array(),
-	y: new Array(),
-	z: new Array(),
-	length: SNAKE_LENGTH
-};
-
-var up = false;
-var down = false;
-var left = false;
-var right = true;
-var front = false;
-var back = false
-
-var inGame = true;
-var endGame = false;
-var pauseGame = false;
-
 /* Initialize game and start it */
 var game = new Game();
 
@@ -116,24 +69,53 @@ function updateSnake() {
 		SNAKE.z[i] = SNAKE.z[i - 1];
 	}
 
-	if (left) {
-		SNAKE.x[0] -= DOT_SIZE;
+	if (POV === 0) {
+		if (left) {
+			SNAKE.x[0] -= DOT_SIZE;
+		}
+		if (right) {
+			SNAKE.x[0] += DOT_SIZE;
+		}
+		if (up) {
+			SNAKE.y[0] -= DOT_SIZE;
+		}
+		if (down) {
+			SNAKE.y[0] += DOT_SIZE;
+		}
+		if (front) {
+			SNAKE.z[0] += DOT_SIZE;
+		}
+		if (back) {
+			SNAKE.z[0] -= DOT_SIZE;
+		}
+	} else if (POV === 1) {
+		if (left) {
+			SNAKE.z[0] -= DOT_SIZE;
+		}
+		if (right) {
+			SNAKE.z[0] += DOT_SIZE;
+		}
+		if (up) {
+			SNAKE.y[0] -= DOT_SIZE;
+		}
+		if (down) {
+			SNAKE.y[0] += DOT_SIZE;
+		}
 	}
-	if (right) {
-		SNAKE.x[0] += DOT_SIZE;
-	}
-	if (up) {
-		SNAKE.y[0] -= DOT_SIZE;
-	}
-	if (down) {
-		SNAKE.y[0] += DOT_SIZE;
-	}
-	if (front) {
-		SNAKE.z[0] += DOT_SIZE;
-	}
-	if (back) {
-		SNAKE.z[0] -= DOT_SIZE;
-	}
+	//else if (POV === 2) {
+	// 	if (left) {
+	// 		SNAKE.x[0] -= DOT_SIZE;
+	// 	}
+	// 	if (right) {
+	// 		SNAKE.x[0] += DOT_SIZE;
+	// 	}
+	// 	if (up) {
+	// 		SNAKE.z[0] -= DOT_SIZE;
+	// 	}
+	// 	if (down) {
+	// 		SNAKE.z[0] += DOT_SIZE;
+	// 	}		
+	// }
 };
 
 function updateApple() {
@@ -170,6 +152,8 @@ function Game() {
 		// Initialize apple
 		updateApple();
 
+		pointOfView();
+
 		// Set first three dots
 		for (var i = 0; i < SNAKE.length; i++) {
 			SNAKE.x[i] = 130 - i * 10;
@@ -178,9 +162,9 @@ function Game() {
 		}
 
 		// Get canvas elements
-		this.FSCanvas = document.getElementById('front-snake');
-		this.TSCanvas = document.getElementById('top-snake');
-		this.SSCanvas = document.getElementById('side-snake');
+		this.FSCanvas = document.getElementById('front-face');
+		this.TSCanvas = document.getElementById('top-face');
+		this.SSCanvas = document.getElementById('side-face');
 		
 		// Test to see if canvas is supported
 		if (this.FSCanvas.getContext) {
@@ -304,12 +288,30 @@ document.onkeydown = function(e) {
 	}
 
 	if (key === KEY_CODES.spacebar) {
-		if (!pauseGame)
-			pauseGame = true;
-		else
-			pauseGame = false;
+		POV = (POV > 0) ? 0 : 1;
+		pointOfView();
 	}
 };
+
+pointOfView = function() {
+	if (POV === 0) {
+		console.log("Made it to POV");
+		$("#front-face").css('border', 'solid green 4px');
+		$("#top-face").css('border', 'solid white 4px');
+		$("#side-face").css('border', 'solid white 4px');
+	}
+	else if (POV === 2) {
+		$("#front-face").css('border', 'solid white 4px');
+		$("#top-face").css('border', 'solid green 4px');
+		$("#side-face").css('border', 'solid white 4px');
+
+	}
+	else if (POV === 1) {
+		$("#front-face").css('border', 'solid white 4px');
+		$("#top-face").css('border', 'solid white 4px');
+		$("#side-face").css('border', 'solid green 4px');
+	}
+}
 
 /* requestAnim shim layer */
 window.requestAnimFrame = (function() {

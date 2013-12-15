@@ -1,33 +1,41 @@
 /* style.css */
 
+body {
+	background-color: black;
+}
+
 .canvas-area {
 	position: absolute;
 	top: 20px;
 	left: 20px;
 }
 
-#top-snake {
+#top-face {
 	position: absolute;
+
 	top: 0px;
 	left: 0px;
 	background: black;
-	border: solid white 2px;
+	/*border: solid white 2px;*/
 }
 
-#front-snake {
+#front-face {
 	position: absolute;
+	margin-top: 8px;
 	top: 300px;
 	left: 0px;
 	background: black;
-	border: solid white 2px;
+	/*border: solid white 2px;*/
 }
 
-#side-snake {
+#side-face {
 	position: absolute;
+	margin-top: 8px;
+	margin-left: 8px;
 	top: 300px;
 	left: 300px;
 	background: black;
-	border: solid white 2px;
+	/*border: solid white 2px;*/
 }
 
 
