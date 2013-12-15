@@ -6,27 +6,11 @@
 	left: 20px;
 }
 
-#top-apple {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	background-color: black;
-	border: solid white 2px;
-}
-
 #top-snake {
 	position: absolute;
 	top: 0px;
 	left: 0px;
-	background: transparent;
-	border: solid white 2px;
-}
-
-#front-apple {
-	position: absolute;
-	top: 300px;
-	left: 0px;
-	background-color: black;
+	background: black;
 	border: solid white 2px;
 }
 
@@ -34,15 +18,7 @@
 	position: absolute;
 	top: 300px;
 	left: 0px;
-	background: transparent;
-	border: solid white 2px;
-}
-
-#side-apple {
-	position: absolute;
-	top: 300px;
-	left: 300px;
-	background-color: black;
+	background: black;
 	border: solid white 2px;
 }
 
@@ -50,7 +26,7 @@
 	position: absolute;
 	top: 300px;
 	left: 300px;
-	background: transparent;
+	background: black;
 	border: solid white 2px;
 }
 
