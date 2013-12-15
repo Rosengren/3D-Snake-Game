@@ -3,15 +3,19 @@
 var WIDTH = 300;
 var HEIGHT = 300;
 var DOT_SIZE = 10;
-var RAND_POS = 29;
+var RAND_POS = 9;
 var APPLE = new Object;
 var SNAKE = new Object;
+var SPEED = 50;
+var COLLISION = false;
+
+var up = false;
+var down = false;
+var left = false;
+var right = false;
 
 /* Initialize game and start it */
 var game = new Game();
-var FappleExists = false;
-var TappleExists = false;
-var SappleExists = false;
 
 function init() {
 	if(game.init())
@@ -52,7 +56,6 @@ function Drawable() {
 		this.depth = 10;
 	}
 
-	this.speed = 1;
 	this.canvasWidth = 0;
 	this.canvasHeight = 0;
 	
@@ -62,9 +65,10 @@ function Drawable() {
 
 function FApple() {
 	this.draw = function() {
-		if (!FappleExists) {
+		if (!APPLE.isVisible) {
+			this.context.clearRect(0, 0, DOT_SIZE, DOT_SIZE);
 			this.context.drawImage(imageRepo.apple, APPLE.x, APPLE.y);
-			FappleExists = true;	// Change Later!
+			APPLE.isVisible = true;	// Change Later!
 		}
 	};
 }
@@ -72,55 +76,44 @@ function FApple() {
 function TApple() {
 	this.draw = function() {
 
-		if (!TappleExists) {
+		if (!APPLE.isVisible) {
+			this.context.clearRect(0, 0, DOT_SIZE, DOT_SIZE);
 			this.context.drawImage(imageRepo.apple, APPLE.x, APPLE.z);
-			TappleExists = true;	// Change Later!
+			APPLE.isVisible = true;	// Change Later!
 		}
 	};
 }
 
 function SApple() {
 	this.draw = function() {
-		if (!SappleExists) {
+		if (!APPLE.isVisible) {
+			this.context.clearRect(0, 0, DOT_SIZE, DOT_SIZE);
 			this.context.drawImage(imageRepo.apple, APPLE.z, APPLE.y);
-			SappleExists = true;	// Change Later!
+			APPLE.isVisible = true;	// Change Later!
 		}
 	};
-}
+};
 
 function FSnake() {
 	this.draw = function() {
-
-		this.context.clearRect(SNAKE.x[0], SNAKE.y[0], WIDTH, HEIGHT);
-		SNAKE.y[0] -= this.speed;
-		if (this.y <= 0 - HEIGHT)
-			return true;
-		else
-			this.context.drawImage(imageRepo.dot, SNAKE.x[0], SNAKE.y[0]);
+		this.context.clearRect(SNAKE.x[SNAKE.length - 1], SNAKE.y[SNAKE.length - 1], DOT_SIZE, DOT_SIZE);
+		this.context.drawImage(imageRepo.dot, SNAKE.x[0], SNAKE.y[0]);
 	};
-}
+};
 
 function TSnake() {
 	this.draw = function() {
-		this.context.clearRect(SNAKE.x[0], SNAKE.z[0], WIDTH, HEIGHT);
-		SNAKE.y[0] -= this.speed;
-		if (this.y <= 0 - HEIGHT)
-			return true;
-		else
-			this.context.drawImage(imageRepo.dot, SNAKE.x[0], SNAKE.z[0]);
+		this.context.clearRect(SNAKE.x[SNAKE.length - 1], SNAKE.z[SNAKE.length - 1], DOT_SIZE, DOT_SIZE);
+		this.context.drawImage(imageRepo.dot, SNAKE.x[0], SNAKE.z[0]);
 	};
-}
+};
 
 function SSnake() {
 	this.draw = function() {
-		this.context.clearRect(SNAKE.z[0], SNAKE.y[0], WIDTH, HEIGHT);
-		SNAKE.y[0] -= this.speed;
-		if (this.y <= 0 - HEIGHT)
-			return true;
-		else
-			this.context.drawImage(imageRepo.dot, SNAKE.z[0], SNAKE.y[0]);
+		this.context.clearRect(SNAKE.z[SNAKE.length - 1], SNAKE.y[SNAKE.length - 1], DOT_SIZE, DOT_SIZE);
+		this.context.drawImage(imageRepo.dot, SNAKE.z[0], SNAKE.y[0]);
 	};
-}
+};
 
 FApple.prototype = new Drawable();
 TApple.prototype = new Drawable();
@@ -131,18 +124,35 @@ TSnake.prototype = new Drawable();
 SSnake.prototype = new Drawable();
 
 
-function updateSnake(x,y,z) {
-	for (var i = 1; i < length; i++) {
-		SNAKE[i].x = SNAKE[i-1].x;
-		SNAKE[i].y = SNAKE[i-1].y;
-		SNAKE[i].z = SNAKE[i-1].z;
+function updateSnake() {
+
+	for (var i = SNAKE.length; i > 0; i--) {
+		SNAKE.x[i] = SNAKE.x[i - 1];
+		SNAKE.y[i] = SNAKE.y[i - 1];
+		SNAKE.z[i] = SNAKE.z[i - 1];
 	}
+
+	if (KEY_STATUS.left) {
+		SNAKE.x[0] -= DOT_SIZE;
+	}
+	if (KEY_STATUS.right) {
+		SNAKE.x[0] += DOT_SIZE;
+	}
+	if (KEY_STATUS.up) {
+		SNAKE.y[0] -= DOT_SIZE;
+	}
+	if (KEY_STATUS.down) {
+		SNAKE.y[0] += DOT_SIZE;
+	}
+
+	//TODO: add z-dimension
 };
 
 function updateApple() {
-	APPLE.x = Math.Random() * RAND_POS * DOT_SIZE;
-	APPLE.y = Math.Random() * RAND_POS * DOT_SIZE;
-	APPLE.z = Math.Random() * RAND_POS * DOT_SIZE;
+	APPLE.x = Math.floor(Math.random() * RAND_POS * DOT_SIZE);
+	APPLE.y = Math.floor(Math.random() * RAND_POS * DOT_SIZE);
+	APPLE.z = Math.floor(Math.random() * RAND_POS * DOT_SIZE);
+	APPLE.isVisible = false;
 };
 
 function checkApple() {
@@ -152,6 +162,14 @@ function checkApple() {
 	}
 };
 
+function detectCollision() {
+	if (SNAKE.x[0] < 0 || SNAKE.x[0] > WIDTH || SNAKE.y[0] < 0 || SNAKE.y[0] > HEIGHT) {
+		COLLISION = true;
+		console.log("Hit the Walls, bud!");
+	}
+}
+
+
 /**
  * Creates Game object which will hold all objects and data
  */
@@ -160,19 +178,22 @@ function Game() {
 	this.init = function() {
 
 		// initialize snake
-		SNAKE.length = 3;
+		SNAKE.length = 4;
 		SNAKE.x = new Array();
 		SNAKE.y = new Array();
 		SNAKE.z = new Array();
 
+
+		// Display first three dots
 		for (var i = 0; i < SNAKE.length; i++) {
-			SNAKE.x[i] = 100 - i * 10;
-			SNAKE.y[i] = 100;
-			SNAKE.z[i] = 100;
+			SNAKE.x[i] = 130 - i * 10;
+			SNAKE.y[i] = 150;
+			SNAKE.z[i] = 150;
 		}
 
 		// initialize apple
-		APPLE.x = APPLE.y = APPLE.z = WIDTH / 2;
+		APPLE.x = APPLE.y = APPLE.z = 150;
+		APPLE.isVisible = false;
 
 		// Get canvas elements
 		this.FACanvas = document.getElementById('front-apple');
@@ -226,23 +247,53 @@ function Game() {
 	
 	// Start animation loop
 	this.start = function() {
-		animate();
+			animate();
 	};
 }
 
-
 /* Animation Loop */
 function animate() {
-	requestAnimFrame(animate);
-	game.Fapple.draw();
-	game.Tapple.draw();
-	game.Sapple.draw();
+	// reduce animation speed
+	setTimeout(function() {
+		requestAnimFrame(animate);
+		game.Fapple.draw();
+		game.Tapple.draw();
+		game.Sapple.draw();
 
-	game.Fsnake.draw();
-	game.Tsnake.draw();
-	game.Ssnake.draw();
+		detectCollision();
+		updateSnake();
+		checkApple();
+
+		game.Fsnake.draw();
+		game.Tsnake.draw();
+		game.Ssnake.draw();
+	}, SPEED);
 }
 
+KEY_CODES = {
+	37: 'left',
+	38: 'up',
+	39: 'right',
+	40: 'down'
+}
+
+KEY_STATUS = {};
+for (code in KEY_CODES) {
+	KEY_STATUS[KEY_CODES[code]] = false;
+}
+
+document.onkeydown = function(e) {
+	var keyCode = e.keyCode;
+	if (KEY_CODES[keyCode]) {
+		e.preventDefault();
+		KEY_STATUS[KEY_CODES[keyCode]] = true;
+		for (code in KEY_CODES) {
+			if (code != keyCode)
+				KEY_STATUS[KEY_CODES[code]] = false;
+		}
+
+	}
+}
 
 /* requestAnim shim layer */
 window.requestAnimFrame = (function() {
