@@ -102,20 +102,20 @@ function updateSnake() {
 			SNAKE.y[0] += DOT_SIZE;
 		}
 	}
-	//else if (POV === 2) {
-	// 	if (left) {
-	// 		SNAKE.x[0] -= DOT_SIZE;
-	// 	}
-	// 	if (right) {
-	// 		SNAKE.x[0] += DOT_SIZE;
-	// 	}
-	// 	if (up) {
-	// 		SNAKE.z[0] -= DOT_SIZE;
-	// 	}
-	// 	if (down) {
-	// 		SNAKE.z[0] += DOT_SIZE;
-	// 	}		
-	// }
+	else if (POV === 2) {
+		if (left) {
+			SNAKE.x[0] -= DOT_SIZE;
+		}
+		if (right) {
+			SNAKE.x[0] += DOT_SIZE;
+		}
+		if (up) {
+			SNAKE.z[0] -= DOT_SIZE;
+		}
+		if (down) {
+			SNAKE.z[0] += DOT_SIZE;
+		}		
+	}
 };
 
 function updateApple() {
@@ -288,7 +288,22 @@ document.onkeydown = function(e) {
 	}
 
 	if (key === KEY_CODES.spacebar) {
-		POV = (POV > 0) ? 0 : 1;
+		POV = (POV > 1) ? 0 : POV + 1;
+		pointOfView();
+	}
+
+	if (key === KEY_CODES.first) {
+		POV = 0;
+		pointOfView();
+	}
+
+	if (key === KEY_CODES.second) {
+		POV = 1;
+		pointOfView();
+	}
+
+	if (key === KEY_CODES.third) {
+		POV = 2;
 		pointOfView();
 	}
 };

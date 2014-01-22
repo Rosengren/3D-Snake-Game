@@ -13,10 +13,13 @@ KEY_CODES = {
 	down: 40,
 	front: 68,
 	back:65,
-	spacebar: 32
+	spacebar: 32,
+	first: 49,
+	second: 50,
+	third: 51
 };
 
-KEYS = [32,37,38,39,40,65,68];
+KEYS = [32,37,38,39,40,65,68, 49, 50, 51];
 
 APPLE = {
 	x: 0,
